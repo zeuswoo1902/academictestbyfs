@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Floating Stone Project — Academic Test</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f6fb; margin: 20px; }
+    .card { background: white; padding: 16px; margin-bottom: 12px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    .button { background: #0b5ed7; color: white; padding: 10px 14px; border-radius: 6px; border: none; cursor: pointer; }
+    .button:hover { background: #084298; }
+    .question { margin-top: 8px; }
+    .answer-label { display: block; margin: 6px 0; cursor: pointer; }
+    #timer { font-weight: bold; font-size: 18px; color: #d9534f; margin-bottom: 12px; }
+  </style>
+</head>
+<body oncontextmenu="return false" oncopy="return false" oncut="return false" onpaste="return false" onselectstart="return false">
+  <h1>Floating Stone Project — Academic Test</h1>
+
+  <!-- Timer -->
+  <div id="timer">Time Remaining: 25:00</div>
+
+  <!-- Student Info -->
+  <div class="card">
+    <label>Full Name:</label><br>
+    <input type="text" id="name" required><br><br>
+    <label>Email:</label><br>
+    <input type="email" id="email" required>
+  </div>
+
+  <!-- Questions -->
+  <form id="testForm" class="card">
+    <div id="questions"></div>
+    <button type="submit" class="button" id="submitBtn">Submit Answers</button>
+  </form>
+
+  <script>
+    // ✅ Latest Apps Script URL
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzGm_V-TVggC-c63fpeoQV-6KA4ar3KuyqRppD5t2sm_nevoYj9z6rHNBJXFKoCrfDl/exec";
+
+    // ===== Timer (25 minutes) =====
+    let timeLeft = 25 * 60; // seconds
+    const timerEl = document.getElementById("timer");
+
+    function updateTimer(){
+      let min = Math.floor(timeLeft / 60);
+      let sec = timeLeft % 60;
+      timerEl.textContent = `Time Remaining: ${min}:${sec < 10 ? "0"+sec : sec}`;
+      if (timeLeft <= 0){
+        clearInterval(timerInterval);
+        alert("⏰ Time is up! Submitting your answers.");
+        document.getElementById("testForm").requestSubmit();
+      }
+      timeLeft--;
+    }
+    const timerInterval = setInterval(updateTimer, 1000);
+
+    // ===== Anti-Cheating: Tab Switch Detection =====
+    let tabSwitchCount = 0;
+    window.addEventListener("blur", () => {
+      tabSwitchCount++;
+      if (tabSwitchCount === 1) {
+        alert("⚠️ Warning: Do not switch tabs! One more time and your test will be submitted.");
+      } else if (tabSwitchCount >= 2) {
+        alert("❌ You switched tabs too many times. Your test will be submitted.");
+        document.getElementById("testForm").requestSubmit();
+      }
+    });
+
+    // ===== Questions =====
+    const questions = [
+      {id:1, text:"All students who join the club study regularly. Some students study regularly.", opts:['a) All club members study regularly','b) Some club members study regularly','c) No club members study regularly','d) All students are club members']},
+      {id:2, text:"Every awardee attends the seminar. John attended the seminar.", opts:['a) John is an awardee','b) John may be an awardee','c) John is not an awardee','d) All attendees are awardees']},
+      {id:3, text:"2, 5, 10, 17, 26, ?", opts:['a) 35','b) 37','c) 38','d) 41']},
+      {id:4, text:"Some students are bilingual. All bilingual people think faster.", opts:['a) Some students think faster','b) All students think faster','c) No students think faster','d) Some students are not bilingual']},
+      {id:5, text:"Many students use tutors. Tutors improve understanding but cost money. What's the best conclusion?", opts:['a) Tutoring guarantees success','b) Tutoring may help but requires investment','c) Tutors are free','d) Students who don’t use tutors fail']},
+      {id:6, text:"If all mammals breathe air and whales are mammals, what follows?", opts:['a) Whales do not breathe air','b) Whales breathe air','c) Some mammals do not breathe air','d) Animals are whales']},
+      {id:7, text:"Every scholar studies. Some students are scholars.", opts:['a) Some students study','b) All students study','c) No students study','d) Scholars are not students']},
+      {id:8, text:"1, 1, 2, 3, 5, 8, ?", opts:['a) 11','b) 12','c) 13','d) 14']},
+      {id:9, text:"In a sample of 50 students, 45 prefer daytime classes. What is a reasonable conclusion?", opts:['a) All students prefer daytime','b) Many students likely prefer daytime','c) No student prefers nighttime','d) Daytime is worst for learning']},
+      {id:10, text:"A campaign improved recycling in 3 neighborhoods. Best inference?", opts:['a) Campaign will fail everywhere','b) Campaign can help increase recycling','c) Recycling is unnecessary','d) Only 3 neighborhoods can recycle']},
+      {id:11, text:"Solve for x and y: x + y = 10; x - y = 2. What's x?", opts:['a) 4','b) 5','c) 6','d) 7']},
+      {id:12, text:"(3x - 2) = 10. x = ?", opts:['a) 2','b) 3','c) 4','d) 5']},
+      {id:13, text:"If 120 students share 8 buses equally, how many per bus?", opts:['a) 14','b) 15','c) 16','d) 18']},
+      {id:14, text:"From a deck of cards, probability of drawing a heart? (standard deck)", opts:['a) 1/2','b) 1/4','c) 1/13','d) 3/13']},
+      {id:15, text:"4, 9, 19, 39, ?", opts:['a) 59','b) 79','c) 77','d) 69']},
+      {id:16, text:"Right triangle with legs 6 and 8. Hypotenuse = ?", opts:['a) 8','b) 10','c) 12','d) 14']},
+      {id:17, text:"If 2x + 3y = 12 and x = 3, find y.", opts:['a) 0','b) 1','c) 2','d) 3']},
+      {id:18, text:"Two coins flipped. Probability of exactly one head?", opts:['a) 1/4','b) 1/2','c) 3/4','d) 2/3']},
+      {id:19, text:"Number of ways to choose 2 hats from 5", opts:['a) 10','b) 20','c) 5','d) 15']},
+      {id:20, text:"Number of ways to arrange 3 letters from FSMP", opts:['a) 12','b) 24','c) 16','d) 6']},
+      {id:21, text:"A recipe needs 3 eggs for 4 servings. For 12 servings how many eggs?", opts:['a) 6','b) 8','c) 9','d) 10']},
+      {id:22, text:"(x^2 - 9) = 0 → x = ?", opts:['a) -3 or 3','b) 0','c) 3 only','d) -9']},
+      {id:23, text:"If a:b = 2:3 and a + b = 25, find a.", opts:['a) 10','b) 12','c) 15','d) 8']},
+      {id:24, text:"Mean of 5 numbers 4, 6, 8, 10, x is 7. Find x.", opts:['a) 8','b) 6','c) 5','d) 7']},
+      {id:25, text:"Area of square with diagonal 10. Side length = ?", opts:['a) 5','b) 5√2','c) (10/√2)','d) 7.07']},
+      {id:26, text:"A box has 3 red & 7 blue; pick 2 without replacement. P(both blue) = ?", opts:['a) 21/45','b) 7/45','c) 21/63','d) 7/20']},
+      {id:27, text:"4(2x - 3) + 4 = 0 → x = ?", opts:['a) 1','b) -1','c) 2','d) 3']},
+      {id:28, text:"7, 11, 15, ... 10th term = ?", opts:['a) 39','b) 43','c) 47','d) 51']},
+      {id:29, text:"Circumference of circle radius 7 (π=22/7)", opts:['a) 44','b) 22','c) 154','d) 88']},
+      {id:30, text:"Number of subsets of a 3-element set (including empty)", opts:['a) 3','b) 6','c) 8','d) 9']},
+      {id:31, text:"Choose the grammatically correct sentence:", opts:['a) She don’t agree with that.','b) She doesn’t agree with that.','c) She not agrees with that.','d) She doesn’t agreeing with that.']},
+      {id:32, text:"When Lila finished, she turned it in. What does 'it' most likely refer to?", opts:['a) A book','b) An assignment','c) A meal','d) A movie']},
+      {id:33, text:"Many students benefit from study groups; they help explain difficult topics. What is the main idea?", opts:['a) Study groups are costly','b) Study groups help students learn','c) Students should study alone','d) Teachers dislike study groups']},
+      {id:34, text:"Choose the best short summary: 'The workshop taught research skills, citation, and presentation.'", opts:['a) Workshop on sports','b) Workshop on research skills','c) Workshop on cooking','d) Workshop closed']},
+      {id:35, text:"Fill the blank: If I ___ earlier, I would have seen her. (had left/left)", opts:['a) left','b) had left','c) have left','d) will leave']},
+      {id:36, text:"Choose closest meaning for 'obtain'", opts:['a) lose','b) receive','c) ignore','d) delay']},
+      {id:37, text:"The teacher spoke to the students because they were noisy. Who is 'they'?", opts:['a) The teacher','b) The students','c) The parents','d) The books']},
+      {id:38, text:"Recycling reduces waste and conserves resources. Main idea is:", opts:['a) Recycling harms environment','b) Recycling benefits environment','c) Recycling is expensive','d) Recycling is useless']},
+      {id:39, text:"Choose correct tense: 'By next year, I ___ my degree.'", opts:['a) will complete','b) will have completed','c) completed','d) have completed']},
+      {id:40, text:"The report lists causes and possible solutions. Best one-line summary:", opts:['a) The report ignores causes','b) The report analyzes problems and solutions','c) The report only gives data','d) The report is fictional']}
+    ];
+
+    const container = document.getElementById("questions");
+    questions.forEach(q=>{
+      const div = document.createElement("div");
+      div.className="question";
+      div.innerHTML = `<p>Q${q.id}. ${q.text}</p>` +
+        q.opts.map(opt=>`<label class="answer-label"><input type="radio" name="q${q.id}" value="${opt[0]}" required> ${opt}</label>`).join("");
+      container.appendChild(div);
+    });
+
+    // ===== Submit Handler =====
+    const form = document.getElementById("testForm");
+    form.addEventListener("submit", e=>{
+      e.preventDefault();
+      const data = new FormData();
+      data.append("name", document.getElementById("name").value);
+      data.append("email", document.getElementById("email").value);
+      for(let i=1;i<=40;i++){
+        const sel = document.querySelector(`input[name="q${i}"]:checked`);
+        data.append("q"+i, sel ? sel.value : "");
+      }
+      document.getElementById("submitBtn").disabled = true;
+      fetch(SCRIPT_URL, { method: "POST", body: data })
+        .then(res => res.text())
+        .then(txt => {
+          alert("✅ Submission successful!");
+        })
+        .catch(err => {
+          alert("❌ Submission failed: " + err);
+          document.getElementById("submitBtn").disabled = false;
+        });
+    });
+  </script>
+</body>
+</html>
