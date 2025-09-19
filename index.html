@@ -93,7 +93,7 @@
       {id:22, text:"(x^2 - 9) = 0 → x = ?", opts:['a) -3 or 3','b) 0','c) 3 only','d) -9']},
       {id:23, text:"If a:b = 2:3 and a + b = 25, find a.", opts:['a) 10','b) 12','c) 15','d) 8']},
       {id:24, text:"Mean of 5 numbers 4, 6, 8, 10, x is 7. Find x.", opts:['a) 8','b) 6','c) 5','d) 7']},
-      {id:25, text:"Area of square with diagonal 10. Side length = ?", opts:['a) 5','b) 5√2','c) (10/√2)','d) 7.07']},
+      {id:25, text:"Area of square with diagonal 10. Side length = ?", opts:['a) 5','b) 5√2','c) (10√2)','d) 7.0']},
       {id:26, text:"A box has 3 red & 7 blue; pick 2 without replacement. P(both blue) = ?", opts:['a) 21/45','b) 7/45','c) 21/63','d) 7/20']},
       {id:27, text:"4(2x - 3) + 4 = 0 → x = ?", opts:['a) 1','b) -1','c) 2','d) 3']},
       {id:28, text:"7, 11, 15, ... 10th term = ?", opts:['a) 39','b) 43','c) 47','d) 51']},
@@ -136,7 +136,7 @@
       // ✅ no-cors fix
       fetch(SCRIPT_URL, { method: "POST", body: data, mode: "no-cors" })
         .then(() => {
-          alert("✅ Submission successful!");
+          alert("✅ Submission successful! ⚠️Do not close the tab unless you told so");
         })
         .catch(err => {
           alert("❌ Submission failed: " + err);
@@ -146,4 +146,5 @@
   </script>
 </body>
 </html>
+
 
