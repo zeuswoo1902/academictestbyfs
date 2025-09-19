@@ -132,9 +132,10 @@
         data.append("q"+i, sel ? sel.value : "");
       }
       document.getElementById("submitBtn").disabled = true;
-      fetch(SCRIPT_URL, { method: "POST", body: data })
-        .then(res => res.text())
-        .then(txt => {
+
+      // ✅ no-cors fix
+      fetch(SCRIPT_URL, { method: "POST", body: data, mode: "no-cors" })
+        .then(() => {
           alert("✅ Submission successful!");
         })
         .catch(err => {
